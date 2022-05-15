@@ -3,7 +3,9 @@ package io.recruitment.assessment.api.service;
 import io.recruitment.assessment.api.dto.Product;
 import io.recruitment.assessment.api.dto.ShoppingCartItem;
 import io.recruitment.assessment.api.entity.ShoppingCartEntity;
+import io.recruitment.assessment.api.exception.IllegalArgumentException;
 import io.recruitment.assessment.api.exception.InternalErrorException;
+import io.recruitment.assessment.api.exception.ResourceNotFoundException;
 import io.recruitment.assessment.api.repository.ShoppingCartRepository;
 import io.recruitment.assessment.api.utils.PageQuery;
 import io.recruitment.assessment.api.utils.PaginationResult;
@@ -69,25 +71,21 @@ public class ShoppingCartService {
      * @param userId
      */
     public void saveItem(ShoppingCartItem shoppingCartItem, Integer userId) {
-        ShoppingCartEntity temp = shoppingCartRepository.findItemByProductId(shoppingCartItem.getProductId(), userId);
-        if (temp != null) {
-            throw new InternalErrorException("");
+        ShoppingCartEntity shoppingCartEntityCheck = shoppingCartRepository.findItemByProductId(shoppingCartItem.getProductId(), userId);
+        if (shoppingCartEntityCheck != null) {
+            throw new InternalErrorException("Shopping cart item existed.");
         }
         Product product = productService.getProductById(shoppingCartItem.getProductId());
-        //商品为空
         if (product == null) {
-            throw new InternalErrorException("");
+            throw new ResourceNotFoundException("Cannot find products.");
         }
-        //超出单个商品的最大数量
         if (shoppingCartItem.getProductCount() < 1) {
-            throw new InternalErrorException("");
+            throw new IllegalArgumentException("Product count number must be above 1.");
         }
-        //超出单个商品的最大数量
         if (shoppingCartItem.getProductCount() > product.getStockNumber()) {
-            throw new IllegalArgumentException("");
+            throw new InternalErrorException("Product count number is over stock number.");
         }
         ShoppingCartEntity shoppingCartEntity = modelMapper.map(shoppingCartItem, ShoppingCartEntity.class);
-        //保存记录
         shoppingCartRepository.save(shoppingCartEntity, userId);
     }
 

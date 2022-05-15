@@ -12,6 +12,9 @@ import io.recruitment.assessment.api.utils.PageQuery;
 import io.recruitment.assessment.api.utils.PaginationResult;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -22,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@CacheConfig(cacheNames = "caffeineCacheManager")
 public class ProductService {
 
     @Autowired
@@ -38,13 +42,14 @@ public class ProductService {
      * @return
      * @Todo: Cache
      */
+    @Cacheable(key = "#productId")
     public Product getProductById(Integer productId) {
         ProductEntity productEntity = productRepository.findById(productId);
         if (productEntity == null) {
             throw new ResourceNotFoundException("Cannot find product: " + productId);
         }
-        Product productDTO = modelMapper.map(productEntity, Product.class);
-        return productDTO;
+        Product product = modelMapper.map(productEntity, Product.class);
+        return product;
     }
 
     /**
@@ -84,6 +89,7 @@ public class ProductService {
      * @param user
      * @return
      */
+    @CachePut(key = "#product.productId")
     public Product saveProduct(Product product, User user) {
         ProductEntity productEntity = modelMapper.map(product, ProductEntity.class);
         productRepository.save(productEntity, user.getUserId());
@@ -100,6 +106,7 @@ public class ProductService {
      * @return
      */
     @Transactional
+    @CachePut(key = "#product.productId")
     public Product updateProduct(Product product, User user) {
         ProductEntity productEntity = modelMapper.map(product, ProductEntity.class);
         ProductEntity productEntityLast = productRepository.findById(product.getProductId());
