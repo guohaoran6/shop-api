@@ -12,8 +12,7 @@ import org.springframework.security.web.header.writers.StaticHeadersWriter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // Just apply to v2 (web endpoint) and v4 (sdk endpoint)
-        http.requestMatchers().antMatchers(HttpMethod.GET, "/api/v1/products/**", "/api/v1/shopping-carts/**");
+        http.requestMatchers().antMatchers(HttpMethod.GET, "/api/v1/**");
 
         http.headers()
                 // Strict-Transport-Security: max-age=31536000; includeSubDomains
