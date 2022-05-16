@@ -19,10 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @CacheConfig(cacheNames = "caffeineCacheManager")
@@ -131,6 +129,11 @@ public class ProductService {
      */
     @Transactional
     public void deleteProducts(Integer[] productIds) {
+        List<Product> isDeletedProducts = getProducts(Arrays.asList(productIds))
+                .stream().filter(product -> product.getDeleteFlg() != 0).collect(Collectors.toList());
+        if (isDeletedProducts.size() != 0) {
+            throw new IllegalArgumentException("Cannot delete non-existed product.");
+        }
         productRepository.deleteProducts(productIds);
     }
 
