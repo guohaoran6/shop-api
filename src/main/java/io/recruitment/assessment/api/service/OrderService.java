@@ -1,5 +1,6 @@
 package io.recruitment.assessment.api.service;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.recruitment.assessment.api.dto.Order;
 import io.recruitment.assessment.api.dto.OrderItem;
 import io.recruitment.assessment.api.dto.Product;
@@ -41,9 +42,10 @@ public class OrderService {
      * @param userId
      * @return
      *
-     * @TODO: Involve Resilience4j-CircuitBreaker to protect the process and to control high traffic.
+     * Involve Resilience4j-CircuitBreaker to protect the process and to control high traffic.
      */
     @Transactional
+    @CircuitBreaker(name = "generateOrderService", fallbackMethod = "generateOrderFallback")
     public String generateOder(Integer[] cartItemIdList, Integer userId) {
         List<ShoppingCartItem> shoppingCartItems = shoppingCartService.getItemList(cartItemIdList, userId);
 
@@ -124,4 +126,7 @@ public class OrderService {
         return orderEntity.getOrderId();
     }
 
+    private String generateOrderFallback(Integer[] cartItemIdList, Integer userId, RuntimeException ex) {
+        throw new InternalErrorException("Cannot generate order due to high traffic. Try later.", ex);
+    }
 }
