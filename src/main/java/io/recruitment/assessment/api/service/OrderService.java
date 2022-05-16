@@ -117,7 +117,7 @@ public class OrderService {
      * @param order
      * @return
      */
-    public Integer saveOrder(Order order) {
+    private Integer saveOrder(Order order) {
         OrderEntity orderEntity = modelMapper.map(order, OrderEntity.class);
         orderRepository.save(orderEntity);
 

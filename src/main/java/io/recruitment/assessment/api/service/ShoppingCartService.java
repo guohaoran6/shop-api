@@ -68,10 +68,10 @@ public class ShoppingCartService {
     /**
      * @Description Save shopping cart item
      * @param shoppingCartItem
-     * @param userId
      */
-    public void saveItem(ShoppingCartItem shoppingCartItem, Integer userId) {
-        ShoppingCartEntity shoppingCartEntityCheck = shoppingCartRepository.findItemByProductId(shoppingCartItem.getProductId(), userId);
+    public Integer saveItem(ShoppingCartItem shoppingCartItem) {
+        ShoppingCartEntity shoppingCartEntityCheck = shoppingCartRepository.findItemByProductId(
+                shoppingCartItem.getProductId(), shoppingCartItem.getUserId());
         if (shoppingCartEntityCheck != null) {
             throw new InternalErrorException("Shopping cart item existed.");
         }
@@ -86,7 +86,9 @@ public class ShoppingCartService {
             throw new InternalErrorException("Product count number is over stock number.");
         }
         ShoppingCartEntity shoppingCartEntity = modelMapper.map(shoppingCartItem, ShoppingCartEntity.class);
-        shoppingCartRepository.save(shoppingCartEntity, userId);
+        shoppingCartRepository.save(shoppingCartEntity);
+
+        return shoppingCartEntity.getCartItemId();
     }
 
     /**

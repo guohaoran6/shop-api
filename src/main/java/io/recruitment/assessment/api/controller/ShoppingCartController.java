@@ -46,13 +46,14 @@ public class ShoppingCartController {
 
     @PostMapping("")
     @ApiOperation(value = "Add Products to Shopping Cart", tags = "v1")
-    public void saveShoppingCartItem(@RequestBody ShoppingCartItem shoppingCartItem,
+    public Integer saveShoppingCartItem(@RequestBody ShoppingCartItem shoppingCartItem,
                                      @RequestHeader("Authorization") String token) {
         User user = authenticationService.authenticateUser(token);
         if (user.getIsAdmin() != 0) {
             throw new UnauthorizedErrorException("Only customer user can use shopping cart.");
         }
-        shoppingCartService.saveItem(shoppingCartItem, user.getUserId());
+        shoppingCartItem.setUserId(user.getUserId());
+        return shoppingCartService.saveItem(shoppingCartItem);
     }
 
 

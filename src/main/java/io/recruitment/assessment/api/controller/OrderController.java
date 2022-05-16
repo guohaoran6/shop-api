@@ -27,7 +27,7 @@ public class OrderController {
     public String generateOder(@RequestParam @Valid Integer[] cartItemIds, @RequestHeader("Authorization") String token) {
         User user = authenticationService.authenticateUser(token);
         if (user.getIsAdmin() != 0) {
-            throw new UnauthorizedErrorException("Only admin user can generate order.");
+            throw new UnauthorizedErrorException("Only customer user can generate order.");
         }
         if (cartItemIds.length < 1) {
             throw new InternalErrorException("Non shopping cart item ids.");

@@ -31,9 +31,9 @@ public interface ShoppingCartRepository {
     List<ShoppingCartEntity> findItemList(Integer[] cartItemIds, Integer userId);
 
     @Insert("INSERT INTO shopping_cart (user_id, product_id, product_count)" +
-            "VALUES ( #{userId}, #{shoppingCartEntity.productId}, #{shoppingCartEntity.productCount} )")
+            "VALUES ( #{shoppingCartEntity.userId}, #{shoppingCartEntity.productId}, #{shoppingCartEntity.productCount} )")
     @Options(useGeneratedKeys = true, keyProperty = "shoppingCartEntity.cartItemId", keyColumn = "cart_item_id")
-    void save(@Param("shoppingCartEntity") ShoppingCartEntity shoppingCartEntity, Integer userId);
+    void save(@Param("shoppingCartEntity") ShoppingCartEntity shoppingCartEntity);
 
     @Update("<script>" +
             "UPDATE shopping_cart SET delete_flg = 1 WHERE cart_item_id IN " +

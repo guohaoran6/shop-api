@@ -20,7 +20,7 @@ curl --location --request POST 'http://localhost:8080/api/v1/user/login' \
     "passwordMd5": "e10adc3949ba59abbe56e057f20f883e"
 }'
 ```
-OR
+AND
 ```
 curl --location --request POST 'http://localhost:8080/api/v1/user/login' \
 --header 'Content-Type: application/json' \
@@ -31,9 +31,10 @@ curl --location --request POST 'http://localhost:8080/api/v1/user/login' \
 ```
 After that, you can get the response with user token. eg. `89b7e228113ce1a562bdb9521c210847`, which will use for other APIs.
 
+
+#### <Notice> Replace the token in Authorization param on the following APIs.
 ### Product APIs
 #### [GET] Fetch a product info
-<Notice> Replace the token in Authorization param.
 
 ```
 curl --location --request GET 'http://localhost:8080/api/v1/products/1' \
@@ -46,7 +47,7 @@ curl --location --request GET 'http://localhost:8080/api/v1/products/search?keyw
 --header 'Authorization: fcea99281fd536c110e6818fd50635d1'
 ```
 
-#### [POST] Add a new product
+#### [POST] Add a new product (only admin use)
 ```
 curl --location --request POST 'http://localhost:8080/api/v1/products' \
 --header 'Authorization: fcea99281fd536c110e6818fd50635d1' \
@@ -61,7 +62,7 @@ curl --location --request POST 'http://localhost:8080/api/v1/products' \
 }'
 ```
 
-#### [PUT] Update a product info
+#### [PUT] Update a product info (only admin use)
 ```
 curl --location --request PUT 'http://localhost:8080/api/v1/products/6' \
 --header 'Authorization: fcea99281fd536c110e6818fd50635d1' \
@@ -77,16 +78,15 @@ curl --location --request PUT 'http://localhost:8080/api/v1/products/6' \
 }'
 ```
 
-#### [PUT] Delete products
+#### [PUT] Delete products (only admin use)
 ```
 curl --location --request PUT 'http://localhost:8080/api/v1/products/delete?productIds=3,4,5' \
---header 'Authorization: fcea99281fd536c110e6818fd50635d1' \
---data-raw ''
+--header 'Authorization: fcea99281fd536c110e6818fd50635d1'
 ```
 
 
 ### Shopping Cart APIs
-#### [POST] Add Products to Shopping Cart
+#### [POST] Add Products to Shopping Cart (only customer use)
 ```
 curl --location --request POST 'http://localhost:8080/api/v1/shopping-carts' \
 --header 'Authorization: 89b7e228113ce1a562bdb9521c210847' \
@@ -97,19 +97,16 @@ curl --location --request POST 'http://localhost:8080/api/v1/shopping-carts' \
 }'
 ```
 
-#### [GET] Get Shopping Cart Items
+#### [GET] Get Shopping Cart Items (only customer use)
 ```
 curl --location --request GET 'http://localhost:8080/api/v1/shopping-carts/page?pageNumber=1' \
 --header 'Authorization: 89b7e228113ce1a562bdb9521c210847'
 ```
 
 ### Order APIs
-#### [POST] Save / Generate Order
+#### [POST] Save/Generate Order (only customer use)
 ```
 curl --location --request POST 'http://localhost:8080/api/v1/orders/save?cartItemIds=1,3' \
 --header 'Authorization: 89b7e228113ce1a562bdb9521c210847' \
 ```
 
-
-## How to use prod profile
-mvn package
